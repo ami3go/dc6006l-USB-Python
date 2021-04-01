@@ -37,7 +37,8 @@
 **W** - close reporting
 
 When you send "Q" it starts periodic message from power supply
-**periodic message:**
+
+**periodic message example:**
 
 0199A 0700A 0139A 0A 029A 0A 0A 1A - on
 
@@ -47,7 +48,7 @@ When you send "Q" it starts periodic message from power supply
 
 0058A 0098A 0005A 0A 028A 1A 0A 1A - current limit ON ()
 
-Periodic mesage format:
+**Periodic mesage format:**
 
 0199A 0700A 0139A 0A 029A 0A 0A 1A
 
@@ -63,7 +64,7 @@ Periodic mesage format:
 
 3 - OT - over time protection
 
-CC/CV - sourse type mode:
+**CC/CV - sourse type mode:**
 
 CC - constant current mode [CC/CV = 0]
 
