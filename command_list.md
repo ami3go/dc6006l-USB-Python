@@ -58,4 +58,6 @@ When you send "Q" it starts periodic message from power supply
 
 **CC/CV - sourse type mode:**
 
-CC - constant current mode [CC/CV = 0]
+CC - constant current mode [CC/CV = 1]
+
+CV - constant voltage mode [CC/CV = 0]
