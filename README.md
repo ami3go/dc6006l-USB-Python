@@ -39,21 +39,34 @@
 When you send "Q" it starts periodic message from power supply
 **periodic message:**
 
-0199A 0700A 0139A 0A 029A 0A 0A 1A - on 
+0199A 0700A 0139A 0A 029A 0A 0A 1A - on
+
 0000A 0000A 0000A 0A 029A 0A 0A 0A - off
+
 0000A 0000A 0000A 0A 029A 0A 2A 0A - short Circuit 
+
 0058A 0098A 0005A 0A 028A 1A 0A 1A - current limit ON ()
-Periodic mesage format 
+
+Periodic mesage format:
+
 0199A 0700A 0139A 0A 029A 0A 0A 1A
+
 [voltage,{V/100}: 1.99]A [ampere{A/1000}:0.700]A [watt{W/10}:1.39W]A [unknown] 0A [temp:029deg] [CC/CV=0]0A [error type]0A [on/0ff:1]A
+
 **Error type:**
+
 0 - OK - non errors
+
 1 - OV - Over voltage protection
+
 2-  OC - over current protection
+
 3 - OT - over time protection
 
 CC/CV - sourse type mode:
+
 CC - constant current mode [CC/CV = 0]
+
 CV - constant voltage mode [CC/CV = 1]
 
 
