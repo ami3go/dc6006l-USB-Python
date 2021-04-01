@@ -1,7 +1,7 @@
 # dc6006l_control
  A python lib to control power supply dc6006l via front usb connector
  
- Unfortunatelly FNIRSI did share any information on how to work with serial connunication. 
+ Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
  Library was created by sniffing serial connunication with logic analyzer. 
  ## Command list: 
 **[cmd]<CR><LF>** general command format
