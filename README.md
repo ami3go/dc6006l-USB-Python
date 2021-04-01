@@ -8,7 +8,8 @@
  
  **When you repost or share any information form this page please attach reference to this page**
  
- Function list: 
+ Function list:
+ 
 **.init(com_port)** - initialization for power supply  
 
 **.close()** - close serial port.
