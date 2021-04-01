@@ -1,13 +1,4 @@
-# DC6006L control library
-
- ## A python lib to control power supply FNIRSI DC6006L via front usb connector
- Power supply link: http://www.fnirsi.cn/productinfo/556155.html
- 
- Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
- Library was created by sniffing serial connunication with logic analyzer. 
- 
- **When you repost or share any information form this page please attach reference to this page**
- ## Command list: 
+## Command list: 
 **[cmd]+CR+LF** general command format
  
 **V0100** - {mV*10}set 1 V (V1000 set 10V)
@@ -68,8 +59,3 @@ When you send "Q" it starts periodic message from power supply
 **CC/CV - sourse type mode:**
 
 CC - constant current mode [CC/CV = 0]
-
-CV - constant voltage mode [CC/CV = 1]
-
-
-
