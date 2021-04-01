@@ -7,7 +7,7 @@
  
  **When you repost or share any information form this page please attach reference to this page**
  ## Command list: 
-**[cmd]<CR><LF>** general command format
+**[cmd]+CR+LF** general command format
  
 **V0100** - {mV*10}set 1 V (V1000 set 10V)
  
