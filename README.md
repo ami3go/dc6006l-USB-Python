@@ -1,5 +1,5 @@
 # dc6006l_control
- ## A python lib to control power supply FNIRSI dc6006l via front usb connector
+ ## A python lib to control power supply FNIRSI DC6006L via front usb connector
  Power supply link: http://www.fnirsi.cn/productinfo/556155.html
  
  Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
