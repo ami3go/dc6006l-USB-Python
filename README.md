@@ -5,7 +5,7 @@
  Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
  Library was created by sniffing serial connunication with logic analyzer. 
  
- When you repost or share any information form this page please attach reference to this page
+ **When you repost or share any information form this page please attach reference to this page
  ## Command list: 
 **[cmd]<CR><LF>** general command format
  
