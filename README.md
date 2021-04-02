@@ -6,6 +6,12 @@
  Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
  Library was created by sniffing serial connunication with logic analyzer. 
  
+ ## Dependency:
+ 
+      import serial
+      import time
+      import serial.tools.list_ports
+
  **When you repost or share any information form this page please attach reference to this page**
  
   ## Function list:
