@@ -1,10 +1,8 @@
+# example of using dc6006l class control.
 
 
-import sys
-#need this string to be able import the lib from /src folder
-#otherwise put  dc6006l_class.py at root of your project
-sys.path.append('../src')
-import dc6006l_class as ps
+import src.dc6006l_class as ps
+#import dc6006l_class as ps
 import time
 
 if __name__ == "__main__":
