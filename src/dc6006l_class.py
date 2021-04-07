@@ -61,23 +61,25 @@ class dc6006l_class:
 
     def set_v_out(self, voltage):
         voltage = range_check(voltage, 0, 60, "voltage")
-        voltage = round(voltage, 3)
-        val = int(voltage * 100)
+        val = int(round((voltage * 100),1))
         txt = f'V{str(val).zfill(4)}\r\n'
         # print for debug
         # print(txt)
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()
+        #time.sleep(0.08)
         self.ser.write(txt.encode())
+        time.sleep(0.1)
         read_back = self.ser.read(10).decode()
-        if len(read_back) == 10:
+        #print(read_back)
+        if len(read_back) == 10 and read_back[4] == "A" and read_back[9] == "A":
             v_out = int(read_back[0:4]) / 100
             i_out = int(read_back[5:9]) / 1000
             if voltage == v_out:
-                # print(f" V: {v_out} I: {i_out}, OK")
+                #print(f" V: {v_out} I: {i_out}, OK")
                 return True
             else:
-                if abs(v_out - voltage)> 0.1:
+                if abs(v_out - voltage) > 0.1:
                     print("Something wrong while setting voltage. Set and read back value mismatch")
                     print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}")
                     return False
@@ -303,7 +305,7 @@ class dc6006l_class:
         self.ser.write("Q\r\n".encode())
 
     def get_state(self):
-        self.ser.reset_input_buffer()
+        #self.ser.reset_input_buffer()
         time.sleep(0.1)
         ret_val = None
         replay_len = 27
