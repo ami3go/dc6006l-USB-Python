@@ -61,6 +61,7 @@ class dc6006l_class:
 
     def set_v_out(self, voltage):
         voltage = range_check(voltage, 0, 60, "voltage")
+        voltage = round(voltage, 3)
         val = int(voltage * 100)
         txt = f'V{str(val).zfill(4)}\r\n'
         # print for debug
@@ -76,20 +77,24 @@ class dc6006l_class:
                 # print(f" V: {v_out} I: {i_out}, OK")
                 return True
             else:
-                print("Something wrong while setting voltage. Set and read back value mismatch")
-                print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}")
-                return False
+                if abs(v_out - voltage)> 0.1:
+                    print("Something wrong while setting voltage. Set and read back value mismatch")
+                    print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}")
+                    return False
+                else:
+                    return True
+
 
     def set_v_out_retry(self, voltage):
         voltage = range_check(voltage, 0, 60, "voltage")
         val = int(voltage * 100)
         txt = f'V{str(val).zfill(4)}\r\n'
         # print for debug
-        # print(txt)
+        print(txt)
         i = 0
         while i < 5:
-            self.ser.reset_input_buffer()
             self.ser.reset_output_buffer()
+            self.ser.reset_input_buffer()
             self.ser.write(txt.encode())
             read_back = self.ser.read(10).decode()
             if len(read_back) == 10:
@@ -106,6 +111,7 @@ class dc6006l_class:
 
     def set_i_out(self, current):
         current = range_check(current, 0, 6, "current")
+        current = round(current, 5)
         val = int(current * 1000)
         txt = f'I{str(val).zfill(4)}\r\n'
         # debug print
@@ -153,10 +159,11 @@ class dc6006l_class:
         return False
 
     def __output_enable_p(self):
+        array_state = None
         self.ser.reset_output_buffer()
         self.ser.write("N\r\n".encode())
         array_state = self.get_state()
-        return array_state[-1]  # return off_on variable of array_status
+        return array_state  # return off_on variable of array_status
 
     def output_enable(self):
         j = 0
@@ -171,18 +178,23 @@ class dc6006l_class:
         self.ser.reset_output_buffer()
         self.ser.write("F\r\n".encode())
         array_state = self.get_state()
-        return array_state[-1]  # return off_on variable of array_status
+        return array_state  # return off_on variable of array_status
 
     def output_disable(self):
         j = 0
         while (j < 4):
             j += 1
-            if (self.__output_disable_p() == 0):
-                return True
+            state = self.__output_disable_p()
+
+            if state != None:
+                if state[-1] == 0:
+                    return True
             else:
                 time.sleep(0.3)
+        return False
 
     def get_status(self, var_name="none"):
+        self.ser.write("W\r\n".encode())
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()
         time.sleep(0.01)
@@ -248,7 +260,7 @@ class dc6006l_class:
             print(f"Wrong voltage: {voltage} V. Should be >= 0.2")
             voltage = 0.2
         val = int(voltage * 100)
-        txt = f'V{str(val).zfill(4)}\r\n'
+        txt = f'B{str(val).zfill(4)}\r\n'
         # print for debug
         # print(txt)
         self.ser.reset_input_buffer()
@@ -266,15 +278,10 @@ class dc6006l_class:
                 print("Something wrong while setting voltage. Set and read back value mismatch")
                 return False
 
-    def set_volt_protect(self, voltage):
-        if voltage > 61:
-            print(f"Wrong voltage: {voltage} V. Max output should be less then 61 V")
-            voltage = 61
-        if voltage < 0.2:
-            print(f"Wrong voltage: {voltage} V. Should be >= 0.2")
-            voltage = 0.2
-        val = int(voltage * 100)
-        txt = f'V{str(val).zfill(4)}\r\n'
+    def set_current_protect(self, current):
+        current = range_check(current, 0, 6, "current")
+        val = int(current * 1000)
+        txt = f'D{str(val).zfill(4)}\r\n'
         # print for debug
         # print(txt)
         self.ser.reset_input_buffer()
@@ -303,11 +310,11 @@ class dc6006l_class:
         while i < 4:
             i = i + 1
             txt = self.ser.read(replay_len).decode()
-            # print(f"i:{i} get state: {txt}")
+            #print(f"i:{i} get state: {txt}")
             if txt == "":
                 time.sleep(0.05)
             else:
-                ret_val = "none"
+                ret_val = None
                 if len(txt) == replay_len:
                     if ((txt[4] == "A") and
                             (txt[9] == "A") and (txt[14] == "A") and
