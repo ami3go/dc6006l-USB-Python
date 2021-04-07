@@ -304,7 +304,7 @@ class dc6006l_class:
 
     def get_state(self):
         self.ser.reset_input_buffer()
-        time.sleep(0.05)
+        time.sleep(0.1)
         ret_val = None
         replay_len = 27
         i = 0
@@ -313,7 +313,7 @@ class dc6006l_class:
             txt = self.ser.read(replay_len).decode()
             #print(f"i:{i} get state: {txt}")
             if txt == "":
-                time.sleep(0.05)
+                time.sleep(0.1)
             else:
                 #ret_val = None
                 if len(txt) == replay_len:

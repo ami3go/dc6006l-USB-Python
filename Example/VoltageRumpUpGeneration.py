@@ -21,7 +21,7 @@ if __name__ == "__main__":
     Vout_low = 3
     vout = Vout_low
     Nreps = 10
-    step_delay = 0.5
+    step_delay = 0.3
     for x in range(0,Nreps ):
         for v in range(round((Vout_high-Vout_low)/voltage_step)):
             power.set_v_out(vout)
