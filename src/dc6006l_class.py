@@ -85,29 +85,29 @@ class dc6006l_class:
                     return True
 
 
-    def set_v_out_retry(self, voltage):
-        voltage = range_check(voltage, 0, 60, "voltage")
-        val = int(voltage * 100)
-        txt = f'V{str(val).zfill(4)}\r\n'
-        # print for debug
-        print(txt)
-        i = 0
-        while i < 5:
-            self.ser.reset_output_buffer()
-            self.ser.reset_input_buffer()
-            self.ser.write(txt.encode())
-            read_back = self.ser.read(10).decode()
-            if len(read_back) == 10:
-                v_out = int(read_back[0:4]) / 100
-                i_out = int(read_back[5:9]) / 1000
-                if voltage == v_out:
-                    # print(f" V: {v_out} I: {i_out}, OK")
-                    return True
-                else:
-                    print("Something wrong while setting voltage. Set and read back value mismatch")
-                    print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}, val: {val}, i: {i}, txt: {txt}")
-                    i = i + 1
-        return False
+    # def set_v_out_retry(self, voltage):
+    #     voltage = range_check(voltage, 0, 60, "voltage")
+    #     val = int(voltage * 100)
+    #     txt = f'V{str(val).zfill(4)}\r\n'
+    #     # print for debug
+    #     print(txt)
+    #     i = 0
+    #     while i < 5:
+    #         self.ser.reset_output_buffer()
+    #         self.ser.reset_input_buffer()
+    #         self.ser.write(txt.encode())
+    #         read_back = self.ser.read(10).decode()
+    #         if len(read_back) == 10:
+    #             v_out = int(read_back[0:4]) / 100
+    #             i_out = int(read_back[5:9]) / 1000
+    #             if voltage == v_out:
+    #                 # print(f" V: {v_out} I: {i_out}, OK")
+    #                 return True
+    #             else:
+    #                 print("Something wrong while setting voltage. Set and read back value mismatch")
+    #                 print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}, val: {val}, i: {i}, txt: {txt}")
+    #                 i = i + 1
+    #     return False
 
     def set_i_out(self, current):
         current = range_check(current, 0, 6, "current")
@@ -131,32 +131,32 @@ class dc6006l_class:
                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val}, txt: {txt}")
                 return False
 
-    def set_i_out_retry(self, current):
-        current = range_check(current, 0, 6, "current")
-        val = int(current * 1000)
-        txt = f'I{str(val).zfill(4)}\r\n'
-        # debug print
-        # print(txt)
-        i = 0
-        while i < 5:
-            self.ser.reset_output_buffer()
-            self.ser.reset_input_buffer()
-            self.ser.write(txt.encode())
-            read_back = self.ser.read(10).decode()
-            if len(read_back) == 10:
-                print(f"read_back: {read_back}")
-                v_out = int(read_back[0:4]) / 100
-                i_out = int(read_back[5:9]) / 1000
-                if current == i_out:
-                    # print(f" V: {v_out} I: {i_out}, OK")
-                    print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
-                    return True
-                else:
-                    print("Something wrong while setting current. Set and read back value mismatch")
-                    print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
-                    i = i + 1
-                    time.sleep(0.1)
-        return False
+    # def set_i_out_retry(self, current):
+    #     current = range_check(current, 0, 6, "current")
+    #     val = int(current * 1000)
+    #     txt = f'I{str(val).zfill(4)}\r\n'
+    #     # debug print
+    #     # print(txt)
+    #     i = 0
+    #     while i < 5:
+    #         self.ser.reset_output_buffer()
+    #         self.ser.reset_input_buffer()
+    #         self.ser.write(txt.encode())
+    #         read_back = self.ser.read(10).decode()
+    #         if len(read_back) == 10:
+    #             print(f"read_back: {read_back}")
+    #             v_out = int(read_back[0:4]) / 100
+    #             i_out = int(read_back[5:9]) / 1000
+    #             if current == i_out:
+    #                 # print(f" V: {v_out} I: {i_out}, OK")
+    #                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
+    #                 return True
+    #             else:
+    #                 print("Something wrong while setting current. Set and read back value mismatch")
+    #                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
+    #                 i = i + 1
+    #                 time.sleep(0.1)
+    #     return False
 
     def __output_enable_p(self):
         array_state = None
@@ -303,10 +303,11 @@ class dc6006l_class:
         self.ser.write("Q\r\n".encode())
 
     def get_state(self):
+        self.ser.reset_input_buffer()
+        time.sleep(0.05)
         ret_val = None
         replay_len = 27
         i = 0
-        self.ser.reset_input_buffer()
         while i < 4:
             i = i + 1
             txt = self.ser.read(replay_len).decode()
@@ -314,7 +315,7 @@ class dc6006l_class:
             if txt == "":
                 time.sleep(0.05)
             else:
-                ret_val = None
+                #ret_val = None
                 if len(txt) == replay_len:
                     if ((txt[4] == "A") and
                             (txt[9] == "A") and (txt[14] == "A") and
