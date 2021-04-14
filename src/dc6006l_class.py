@@ -304,6 +304,9 @@ class dc6006l_class:
     def enable_state_reporting(self):
         self.ser.write("Q\r\n".encode())
 
+    def disable_state_reporting(self):
+        self.ser.write("W\r\n".encode())
+
     def get_state(self):
         #self.ser.reset_input_buffer()
         time.sleep(0.1)
