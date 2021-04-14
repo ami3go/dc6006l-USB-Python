@@ -6,6 +6,16 @@
  Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
  Library was created by sniffing serial connunication with logic analyzer. 
  
+ 
+ !Warning:
+ Firmware for PS is immature. 
+ Bug identified so far:
+ 
+ 
+ 13.04.2021
+ - incorrect voltage set. for example you sent 0.7V while power supply could sent 7V or 70 V =)
+   !Please use overvoltage protection when working power supply and usb interface.!
+ 
  ## Dependency:
  
       import serial
