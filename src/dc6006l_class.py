@@ -19,6 +19,18 @@ import serial.tools.list_ports
 import serial
 import time
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 def range_check(val, min, max, val_name):
     if val > max:
         print(f"Wrong {val_name}: {val}. Max output should be less then {max} V")
