@@ -69,25 +69,34 @@ class dc6006l_class:
     def close(self):
         self.ser.close()
         self.ser = None
+    def send(self, cmd_str):
+        self.ser.reset_output_buffer()
+        txt = f'{cmd_str}\r\n'
+        self.ser.write(txt.encode())
+
+    def query(self, n_bytes, cmd_str=None ):
+        if cmd_str != None:
+            self.ser.reset_output_buffer()
+            txt = f'{cmd_str}\r\n'
+            self.ser.reset_input_buffer()
+            self.ser.write(txt.encode())
+            time.sleep(0.1)
+        read_back = self.ser.read(n_bytes).decode()
+        return read_back
 
     def set_v_out(self, voltage):
         voltage = range_check(voltage, 0, 60, "voltage")
         val = int(round((voltage * 100),1))
-        txt = f'V{str(val).zfill(4)}\r\n'
-        # print for debug
-        # print(txt)
-        self.ser.reset_input_buffer()
-        self.ser.reset_output_buffer()
-        #time.sleep(0.08)
-        self.ser.write(txt.encode())
-        time.sleep(0.1)
-        read_back = self.ser.read(10).decode()
+        txt = f'V{str(val).zfill(4)}'
+        n_bytes = 10
+        read_back = self.query(n_bytes, txt)
         #print(read_back)
         if len(read_back) == 10 and read_back[4] == "A" and read_back[9] == "A":
-            v_out = int(read_back[0:4]) / 100
-            i_out = int(read_back[5:9]) / 1000
+            z = read_back.split("A")
+            v_out = int(z[0]) / 100
+            i_out = int(z[1]) / 1000
             if voltage == v_out:
-                #print(f" V: {v_out} I: {i_out}, OK")
+                # print(f" V: {v_out} I: {i_out}, OK")
                 return True
             else:
                 if abs(v_out - voltage) > 0.1:
@@ -98,44 +107,17 @@ class dc6006l_class:
                     return True
 
 
-    # def set_v_out_retry(self, voltage):
-    #     voltage = range_check(voltage, 0, 60, "voltage")
-    #     val = int(voltage * 100)
-    #     txt = f'V{str(val).zfill(4)}\r\n'
-    #     # print for debug
-    #     print(txt)
-    #     i = 0
-    #     while i < 5:
-    #         self.ser.reset_output_buffer()
-    #         self.ser.reset_input_buffer()
-    #         self.ser.write(txt.encode())
-    #         read_back = self.ser.read(10).decode()
-    #         if len(read_back) == 10:
-    #             v_out = int(read_back[0:4]) / 100
-    #             i_out = int(read_back[5:9]) / 1000
-    #             if voltage == v_out:
-    #                 # print(f" V: {v_out} I: {i_out}, OK")
-    #                 return True
-    #             else:
-    #                 print("Something wrong while setting voltage. Set and read back value mismatch")
-    #                 print(f" Vset: {voltage} Vget: {v_out}, Iget: {i_out}, val: {val}, i: {i}, txt: {txt}")
-    #                 i = i + 1
-    #     return False
-
     def set_i_out(self, current):
         current = range_check(current, 0, 6, "current")
         current = round(current, 5)
         val = int(current * 1000)
-        txt = f'I{str(val).zfill(4)}\r\n'
-        # debug print
-        # print(txt)
-        self.ser.reset_input_buffer()
-        self.ser.reset_output_buffer()
-        self.ser.write(txt.encode())
-        read_back = self.ser.read(10).decode()
+        txt = f'I{str(val).zfill(4)}'
+        n_bytes = 10
+        read_back = self.query(n_bytes, txt)
         if len(read_back) == 10:
-            v_out = int(read_back[0:4]) / 100
-            i_out = int(read_back[5:9]) / 1000
+            z = read_back.split("A")
+            v_out = int(z[0]) / 100
+            i_out = int(z[1]) / 1000
             if current == i_out:
                 # print(f" V: {v_out} I: {i_out}, OK")
                 return True
@@ -144,37 +126,10 @@ class dc6006l_class:
                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val}, txt: {txt}")
                 return False
 
-    # def set_i_out_retry(self, current):
-    #     current = range_check(current, 0, 6, "current")
-    #     val = int(current * 1000)
-    #     txt = f'I{str(val).zfill(4)}\r\n'
-    #     # debug print
-    #     # print(txt)
-    #     i = 0
-    #     while i < 5:
-    #         self.ser.reset_output_buffer()
-    #         self.ser.reset_input_buffer()
-    #         self.ser.write(txt.encode())
-    #         read_back = self.ser.read(10).decode()
-    #         if len(read_back) == 10:
-    #             print(f"read_back: {read_back}")
-    #             v_out = int(read_back[0:4]) / 100
-    #             i_out = int(read_back[5:9]) / 1000
-    #             if current == i_out:
-    #                 # print(f" V: {v_out} I: {i_out}, OK")
-    #                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
-    #                 return True
-    #             else:
-    #                 print("Something wrong while setting current. Set and read back value mismatch")
-    #                 print(f" Iset: {current} Vget: {v_out}, Iget: {i_out}, val: {val},i:{i},  txt: {txt}")
-    #                 i = i + 1
-    #                 time.sleep(0.1)
-    #     return False
 
     def __output_enable_p(self):
         array_state = None
-        self.ser.reset_output_buffer()
-        self.ser.write("N\r\n".encode())
+        self.send("N")
         array_state = self.get_state()
         return array_state  # return off_on variable of array_status
 
@@ -323,7 +278,7 @@ class dc6006l_class:
         i = 0
         while i < 4:
             i = i + 1
-            txt = self.ser.read(replay_len).decode()
+            txt = self.query(replay_len, None)
             #print(f"i:{i} get state: {txt}")
             if txt == "":
                 time.sleep(0.1)
@@ -334,14 +289,16 @@ class dc6006l_class:
                             (txt[9] == "A") and (txt[14] == "A") and
                             (txt[16] == "A") and (txt[20] == "A") and
                             (txt[22] == "A")):
-                        v_out = int(txt[0:4]) / 100
-                        i_out = int(txt[5:9]) / 1000
-                        p_out = int(txt[10:14]) / 100
-                        p1 = int(txt[15:16])
-                        temp = int(txt[17:20])
-                        cv_cc = int(txt[21:22])
-                        error = int(txt[23:24])
-                        off_on = int(txt[25:26])
+                        z = txt.split("A")
+                        v_out = int(z[0]) / 100
+                        i_out = int(z[1]) / 1000
+                        p_out = int(z[2]) / 100
+                        p1 = int(z[3])
+                        temp = int(z[4])
+                        cv_cc = int(z[5])
+                        error = int(z[6])
+                        off_on = int(z[7])
                         ret_val = [v_out, i_out, p_out, p1, temp, cv_cc, error, off_on]
+
                         break
         return ret_val

@@ -25,12 +25,14 @@ if __name__ == "__main__":
     for x in range(0,Nreps ):
         for v in range(round((Vout_high-Vout_low)/voltage_step)):
             power.set_v_out(vout)
+            power.set_i_out(vout/100 +0.5)
             time.sleep(step_delay)
             state = power.get_state()
             print(f"Vout: {vout} State: {state}")
             vout = round((vout + voltage_step),3)# function round should be used beca
         for v in range(round((Vout_high-Vout_low)/voltage_step)):
             power.set_v_out(vout)
+            power.set_i_out(vout / 100 + 0.5 )
             time.sleep(step_delay)
             state = power.get_state()
             print(f"Vout: {vout} State: {state}")
