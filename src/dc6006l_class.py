@@ -69,12 +69,13 @@ class dc6006l_class:
     def close(self):
         self.ser.close()
         self.ser = None
+
     def send(self, cmd_str):
         self.ser.reset_output_buffer()
         txt = f'{cmd_str}\r\n'
         self.ser.write(txt.encode())
 
-    def query(self, n_bytes, cmd_str=None ):
+    def query(self, n_bytes, cmd_str=None):
         if cmd_str != None:
             self.ser.reset_output_buffer()
             txt = f'{cmd_str}\r\n'
@@ -162,41 +163,97 @@ class dc6006l_class:
         return False
 
     def get_status(self, var_name="none"):
-        self.ser.write("W\r\n".encode())
-        self.ser.reset_input_buffer()
-        self.ser.reset_output_buffer()
+        self.disable_state_reporting()
         time.sleep(0.01)
-        self.ser.write("Q\r\n".encode())
-        time.sleep(0.05)
-        txt = self.ser.read(66).decode()
-        time.sleep(0.01)
-        # self.ser.write("W\r\n".encode())
+        self.enable_state_reporting()
+        txt = self.query(66, None)
+        # while i < 4:
+        #     i = i + 1
+        #     txt = self.query(replay_len, None)
+        #     print(f"i:{i} get state: {txt}")
+        #     if txt == "":
+        #         # self.ser.reset_input_buffer()
+        #         time.sleep(0.05)
+        #     else:
+        #         # ret_val = None
+        #         if len(txt) == replay_len:
+        #             if ((txt[4] == "A") and
+        #                     (txt[9] == "A") and (txt[14] == "A") and
+        #                     (txt[16] == "A") and (txt[20] == "A") and
+        #                     (txt[22] == "A")):
+        #                 print(txt)
+        #                 z = txt.split("A")
+        #                 v_out = int(z[0]) / 100
+        #                 i_out = int(z[1]) / 1000
+        #                 p_out = int(z[2]) / 100
+        #                 p1 = int(z[3])
+        #                 temp = int(z[4])
+        #                 cv_cc = int(z[5])
+        #                 error = int(z[6])
+        #                 off_on = int(z[7])
+        #                 ret_val = [v_out, i_out, p_out, p1, temp, cv_cc, error, off_on]
+        #
+        #                 break
+        # return ret_val
+
+
+        if txt.find("KB") != -1:
+            self.disable_state_reporting()
+            time.sleep(0.5)
+            self.enable_state_reporting()
+            time.sleep(0.1)
+            txt = self.query(66, None)
+
         if txt.find("KB") == -1:
             print(f"Get_status. Wrong replay on COM: {txt}")
             print("Please check the COM port number")
             # self.ser.close()
             return False
         else:
-            print(f"get_status: {txt}")
+            # print(f"get_status: {txt}")
+            txt = txt.replace("KB","0",1)
+
+            z = txt.split('A')
+            # print(f"get_status: {z}")
             # decode first replay string.
             # there is no input voltage ??
-            v_out = int(txt[2:6]) / 100
-            i_out = int(txt[7:11]) / 1000
-            p_out = int(txt[13:16]) / 100
-            p1 = int(txt[17:18])
-            temp = int(txt[19:22])
-            cv_cc = int(txt[23:24])
-            limit_error = int(txt[25:26])
-            on_off = int(txt[27:28])
-            v_set = int(txt[29:33]) / 100
-            i_set = int(txt[34:38]) / 1000
-            v_lim = int(txt[39:43]) / 100
-            i_lim = int(txt[44:48]) / 1000
-            p_lim = int(txt[49:54]) / 100
-            tout_en = int(txt[55:56])
-            tout_hh = int(txt[57:59])
-            tout_mm = int(txt[60:62])
-            tout_ss = int(txt[63:65])
+            v_out = int(z[0]) / 100
+            i_out = int(z[1]) / 1000
+            p_out = int(z[2]) / 100
+            p1 = int(z[3])
+            temp = int(z[4])
+            cv_cc = int(z[5])
+            limit_error = int(z[6])
+            on_off = int(z[7])
+            v_set = int(z[8]) / 100
+            i_set = int(z[9]) / 1000
+            v_lim = int(z[10]) / 100
+            i_lim = int(z[11]) / 1000
+            p_lim = int(z[12]) / 100
+            tout_en = int(z[13])
+            tout_hh = int(z[14])
+            tout_mm = int(z[15])
+            tout_ss = int(z[16])
+
+
+
+            # v_out = int(txt[2:6]) / 100
+            # i_out = int(txt[7:11]) / 1000
+            # p_out = int(txt[13:16]) / 100
+            # p1 = int(txt[17:18])
+            # temp = int(txt[19:22])
+            # cv_cc = int(txt[23:24])
+            # limit_error = int(txt[25:26])
+            # on_off = int(txt[27:28])
+            # v_set = int(txt[29:33]) / 100
+            # i_set = int(txt[34:38]) / 1000
+            # v_lim = int(txt[39:43]) / 100
+            # i_lim = int(txt[44:48]) / 1000
+            # p_lim = int(txt[49:54]) / 100
+            # tout_en = int(txt[55:56])
+            # tout_hh = int(txt[57:59])
+            # tout_mm = int(txt[60:62])
+            # tout_ss = int(txt[63:65])
             status = {
                 "v_out": v_out,
                 "i_out": i_out,
@@ -268,23 +325,22 @@ class dc6006l_class:
                 return False
 
     def enable_state_reporting(self):
-        self.ser.write("Q\r\n".encode())
+        self.send("Q")
 
     def disable_state_reporting(self):
-        self.ser.write("W\r\n".encode())
+        self.send("W")
 
     def get_state(self):
-        #self.ser.reset_input_buffer()
-        time.sleep(0.1)
         ret_val = None
         replay_len = 27
         i = 0
         while i < 4:
             i = i + 1
             txt = self.query(replay_len, None)
-            #print(f"i:{i} get state: {txt}")
+            print(f"i:{i} get state: {txt}")
             if txt == "":
-                time.sleep(0.1)
+                # self.ser.reset_input_buffer()
+                time.sleep(0.05)
             else:
                 #ret_val = None
                 if len(txt) == replay_len:
@@ -292,6 +348,7 @@ class dc6006l_class:
                             (txt[9] == "A") and (txt[14] == "A") and
                             (txt[16] == "A") and (txt[20] == "A") and
                             (txt[22] == "A")):
+                        print(txt)
                         z = txt.split("A")
                         v_out = int(z[0]) / 100
                         i_out = int(z[1]) / 1000
