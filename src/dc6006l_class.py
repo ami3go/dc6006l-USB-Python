@@ -72,6 +72,7 @@ class dc6006l_class:
 
     def send(self, cmd_str):
         self.ser.reset_output_buffer()
+        time.sleep(0.1)
         txt = f'{cmd_str}\r\n'
         self.ser.write(txt.encode())
 
@@ -81,7 +82,7 @@ class dc6006l_class:
             txt = f'{cmd_str}\r\n'
             self.ser.reset_input_buffer()
             self.ser.write(txt.encode())
-            time.sleep(0.1)
+            time.sleep(0.15)
         read_back = self.ser.read(n_bytes).decode()
         return read_back
 
@@ -131,8 +132,8 @@ class dc6006l_class:
     def __output_enable_p(self):
         array_state = None
         self.send("N")
-        array_state = self.get_state()
-        return array_state  # return off_on variable of array_status
+        state = self.get_state()
+        return state["Output"] # return off_on variable of array_status
 
     def output_enable(self):
         j = 0
@@ -154,19 +155,21 @@ class dc6006l_class:
         while (j < 4):
             j += 1
             state = self.__output_disable_p()
-
+            # print(state)
             if state != None:
-                if state[-1] == 0:
+                if state["Output"] == 0:
                     return True
             else:
                 time.sleep(0.3)
         return False
 
     def get_status(self, var_name="none"):
+        replay_len = 66
         self.disable_state_reporting()
-        time.sleep(0.01)
+        time.sleep(0.1)
         self.enable_state_reporting()
-        txt = self.query(66, None)
+        txt = self.query(replay_len, None)
+        # i=0
         # while i < 4:
         #     i = i + 1
         #     txt = self.query(replay_len, None)
@@ -191,10 +194,19 @@ class dc6006l_class:
         #                 cv_cc = int(z[5])
         #                 error = int(z[6])
         #                 off_on = int(z[7])
+        #                 status["Vout"] = v_out
+        #                 status["Iout"] = i_out
+        #                 status["Pout"] = p_out
+        #                 status["P1"] = p1
+        #                 status["Temp"] = temp
+        #                 status["CV_CC"] = cv_cc
+        #                 status["Error"] = error
+        #                 status["Output"] = off_on
         #                 ret_val = [v_out, i_out, p_out, p1, temp, cv_cc, error, off_on]
-        #
+        #                 # return ret_val
+        #                 return  status
         #                 break
-        # return ret_val
+        # return None
 
 
         if txt.find("KB") != -1:
@@ -331,13 +343,14 @@ class dc6006l_class:
         self.send("W")
 
     def get_state(self):
+        ostate = {}
         ret_val = None
         replay_len = 27
         i = 0
-        while i < 4:
+        while i < 5:
             i = i + 1
             txt = self.query(replay_len, None)
-            print(f"i:{i} get state: {txt}")
+            # print(f"i:{i} get state: {txt}")
             if txt == "":
                 # self.ser.reset_input_buffer()
                 time.sleep(0.05)
@@ -348,7 +361,7 @@ class dc6006l_class:
                             (txt[9] == "A") and (txt[14] == "A") and
                             (txt[16] == "A") and (txt[20] == "A") and
                             (txt[22] == "A")):
-                        print(txt)
+                        # print(txt)
                         z = txt.split("A")
                         v_out = int(z[0]) / 100
                         i_out = int(z[1]) / 1000
@@ -358,7 +371,16 @@ class dc6006l_class:
                         cv_cc = int(z[5])
                         error = int(z[6])
                         off_on = int(z[7])
-                        ret_val = [v_out, i_out, p_out, p1, temp, cv_cc, error, off_on]
+                        ostate["Vout"] = v_out
+                        ostate["Iout"] = i_out
+                        ostate["Pout"] = p_out
+                        ostate["P1"] = p1
+                        ostate["Temp"] = temp
+                        ostate["CV_CC"] = cv_cc
+                        ostate["Error"] = error
+                        ostate["Output"] = off_on
 
+                        # ret_val = [v_out, i_out, p_out, p1, temp, cv_cc, error, off_on]
+                        ret_val = ostate
                         break
         return ret_val

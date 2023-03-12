@@ -19,7 +19,8 @@ if __name__ == "__main__":
 
 
     power = ps.dc6006l_class()
-    result = power.init("COM4")
+    # result = power.init("COM4")
+    result = power.init('/dev/ttyUSB0')  # linux variant
     power.get_status()
     power.enable_state_reporting()
     power.output_disable()

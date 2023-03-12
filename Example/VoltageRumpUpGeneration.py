@@ -8,7 +8,8 @@ import time
 if __name__ == "__main__":
 
     power = ps.dc6006l_class()
-    result = power.init("COM5")
+    #result = power.init("COM5") #windows variant
+    result = power.init('/dev/ttyUSB0') #linux variant
     power.get_status()
     power.enable_state_reporting()
     power.disable_state_reporting()
@@ -19,22 +20,22 @@ if __name__ == "__main__":
 
     vout = 0.00
     voltage_step = 0.1
-    Vout_high = 6
-    Vout_low = 3
+    Vout_high = 10
+    Vout_low = 2
     vout = Vout_low
-    Nreps = 10
+    Cycles = 10
     step_delay = 0.5
-    for x in range(0,Nreps ):
+    for x in range(0, Cycles):
         for v in range(round((Vout_high-Vout_low)/voltage_step)):
             power.set_v_out(vout)
-            power.set_i_out(vout/100 +0.5)
+            # power.set_i_out(vout/100 +0.5)
             time.sleep(step_delay)
             state = power.get_state()
             print(f"Vout: {vout} State: {state}")
             vout = round((vout + voltage_step),3)# function round should be used beca
         for v in range(round((Vout_high-Vout_low)/voltage_step)):
             power.set_v_out(vout)
-            power.set_i_out(vout / 100 + 0.5 )
+            # power.set_i_out(vout / 100 + 0.5 )
             time.sleep(step_delay)
             state = power.get_state()
             print(f"Vout: {vout} State: {state}")

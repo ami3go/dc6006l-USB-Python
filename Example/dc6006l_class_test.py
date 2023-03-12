@@ -8,7 +8,7 @@ import time
 if __name__ == "__main__":
 
     power = ps.dc6006l_class()
-    result = power.init("COM6")
+    result = power.init("/dev/ttyUSB0")
     power.get_status()
     power.enable_state_reporting()
     power.output_disable()
