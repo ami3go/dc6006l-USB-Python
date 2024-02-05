@@ -3,8 +3,9 @@
  ## A python lib to control power supply FNIRSI DC6006L via front usb connector
  Power supply link: http://www.fnirsi.cn/productinfo/556155.html
  
- Unfortunatelly FNIRSI did not share any information on how to work with serial connunication. 
- Library was created by sniffing serial connunication with logic analyzer. 
+
+ Unfortunately FNIRSI did not share any information on how to work with serial connunication. 
+ Library was created by sniffing serial communication with logic analyzer. 
  
  
  !Warning:
@@ -13,8 +14,8 @@
  
  
  13.04.2021
- - incorrect voltage set. for example you sent 0.7V while power supply could sent 7V or 70 V =)
-   !Please use overvoltage protection when working power supply and usb interface.!
+ - incorrect voltage set. for example, you sent 0.7V while power supply could sent 7V or 70 V =)
+   !Please use over-voltage protection when working power supply and usb interface.!
  
  ## Dependency:
  
@@ -43,7 +44,7 @@
 **.output_disable()**
 
 **.get_status(var_name)** - if var_name = none or empty, a list of all variable would be returned. 
-                          - if var_name = "sepecific_name" -  only specific var value vould be returned 
+                          - if var_name = "specific_name" -  only specific var value vould be returned 
          
                 "v_out": v_out,
                 "i_out": i_out,
@@ -69,6 +70,7 @@
 **.get_state()** - ret_val = [v_out,i_out,p_out,p1,temp,cv_cc,error,off_on]
 
 
+Full command lis
 
 
 
