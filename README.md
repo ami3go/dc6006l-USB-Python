@@ -52,8 +52,9 @@ with DC6006L("/dev/ttyUSB0") as psu:          # or "COM5" on Windows
     psu.output_off()
 ```
 
-More in [examples/](examples) – run them as
-`python examples/basic_usage.py /dev/ttyUSB0`.
+More in [examples/](examples/README.md) – status readout, protection setup
+with full error handling, square wave, voltage ramp and monitoring. Run them
+as `python examples/status_readout.py /dev/ttyUSB0`.
 
 ## API
 

@@ -9,8 +9,8 @@
 | Path | Change |
 |---|---|
 | `dc6006l/` | new root-level package: `driver.py`, `transport.py`, `protocol.py`, `models.py`, `validation.py`, `exceptions.py` |
-| `tests/` | fake serial device with fault injection + 157 tests |
-| `examples/` | `basic_usage.py`, `monitor.py`, `square_wave.py`, `voltage_ramp.py` (replace `Example/`) |
+| `tests/` | fake serial device with fault injection + 164 tests |
+| `examples/` | `status_readout.py`, `protection_setup.py`, `basic_usage.py`, `monitor.py`, `square_wave.py`, `voltage_ramp.py` + index README (replace `Example/`) |
 | `docs/PROTOCOL.md` | replaces `command_list.md`; every fact marked observed / assumed / unknown |
 | `docs/HIL_RUNBOOK.md` | new |
 | `README.md` | rewritten: safety warning, API, units, exceptions, migration table |
@@ -40,17 +40,17 @@ The old `dc6006l_class` API was removed rather than wrapped (task §3:
 | 12 | Inconsistent verification | single exact comparison in integer units/Decimal | covered by #1/#3 tests |
 | 13 | `requirements.txt` system dump | `pyproject.toml`, pyserial only | clean build/install (§3) |
 | 14 | `venv/`, caches, IDE tracked | removed, `.gitignore` | `git ls-files` |
-| 15 | Broken examples | rewritten, all results checked, safe shutdown | `test_example_compiles`, `test_example_help_runs`, `test_example_runs_against_fake` |
+| 15 | Broken examples | rewritten, all results checked, safe shutdown | `test_example_compiles`, `test_example_help_runs`, `test_example_runs_against_fake`, `test_status_readout_does_not_write_settings`, `test_protection_setup_reports_mismatch` |
 | 16 | Inconsistent docs | README + `docs/PROTOCOL.md` rewritten | review |
 
 ## 3. Commands and results
 
 ```
 $ python -m pytest -q                          # Python 3.14.8, pyserial 3.5
-157 passed
+164 passed
 
 $ uv run --python 3.9 --with pytest --with pyserial --with . python -m pytest -q
-157 passed
+164 passed
 
 $ python -m build
 Successfully built dc6006l-1.0.0.tar.gz and dc6006l-1.0.0-py3-none-any.whl
@@ -61,7 +61,7 @@ $ cd /tmp && clean/bin/python -c "import dc6006l; print(dc6006l.__version__)"
 1.0.0
 ```
 
-CI workflow added but not yet executed (branch not pushed).
+CI (GitHub Actions): build + tests on ubuntu 3.12/3.13 and windows 3.9/3.12/3.13 pass.
 
 ## 4. Remaining protocol uncertainties and risks
 
