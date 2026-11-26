@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dc6006l"
+version = "1.0.0"
+description = "Python driver for the FNIRSI DC6006L programmable power supply over USB serial"
+readme = "README.md"
+license = "Unlicense"
+license-files = ["LICENSE"]
+authors = [{ name = "ami3go" }]
+requires-python = ">=3.9"
+dependencies = ["pyserial>=3.4,<4"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Hardware :: Hardware Drivers",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "build"]
+
+[project.urls]
+Homepage = "https://github.com/ami3go/dc6006l-USB-Python"
+
+[tool.setuptools]
+packages = ["dc6006l"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
