@@ -1,11 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
 
-.idea/workspace.xml
-.idea/workspace.xml
-*.xml
-*.pyc
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.idea/
+.vscode/
 *.iml
-.idea/dc6006l_lib.iml
-.idea/dc6006l_lib.iml
-.idea/dc6006l_lib.iml
-*.xml
-*.xml
